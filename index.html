@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<!--
+  时间账本 · 轻矩阵版
+  版本：v2026.10.27-2104（最新）
+  配色：生活 #EBD9AC 娱乐 #B7D3AC 学习 #D95F4E 临时 #EE9126 创作 #7B6BAE
+  存档键：lightmatrix.v1
+  十二时辰 · 每日三条 800 字节日志 · 农历与干支 · 节气与法定节假日(2026)
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="version" content="2026.10.27-2104">
+<title>时间账本 · 轻矩阵</title>
+<style>
+:root{
+  --bg:#F3EEE5;
+  --paper:#FFFCF7;
+  --ink:#2A2620;
+  --muted:#8B8478;
+  --line:#E2D9C9;
+  --line2:#C9BFAE;
+  --c1:#EBD9AC;  /* 生活 */
+  --c7:#A39C90;  /* 杂务 */
+  --c2:#7B6BAE;  /* 创作 */
+  --c3:#D95F4E;  /* 学习 */
+  --c4:#4F8FB8;  /* 工作 */
+  --c5:#B7D3AC;  /* 娱乐 */
+  --c6:#EE9126;  /* 临时 */
+  --blank:#E9E2D3;
+  --alarm:#B54B45;  /* 界面警示色，与分类色无关 */
+  --amber:#C08A2E;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--ink);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  padding:18px 14px 64px;
+}
+.app{max-width:1000px;margin:0 auto}
+
+.head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;margin-bottom:14px}
+.head h1{
+  font-family:"Songti SC","STSong",Georgia,serif;
+  font-size:22px;font-weight:600;letter-spacing:.08em;margin:0;
+  color:#2E5C78;
+}
+.head .ver{
+  font-size:10.5px;color:var(--muted);border:1px solid var(--line2);
+  padding:1px 7px;border-radius:20px;letter-spacing:.06em;align-self:center;
+}
+.head #meta{color:var(--muted);font-size:12px}
+
+.datebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+.datebar input[type=date]{
+  flex:0 0 172px;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--paper);color:var(--ink);font:inherit;
+}
+.datebar .dmeta{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+.datebar .lunar{font-size:11.5px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+.datebar .lunar b{font-weight:600;color:var(--ink)}
+.datebar .lunar i{font-style:normal;margin-left:8px;color:#A79D8B}
+.datebar .dinfo{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--ink);white-space:nowrap;
+}
+.datebar .dinfo .wd{color:var(--muted)}
+.datebar .dinfo .hol{color:var(--alarm);font-weight:600}
+.datebar .dinfo .work{color:var(--amber);font-weight:600}
+.datebar .dinfo .term{color:#6E7F62;font-weight:600}
+.datebar .dinfo i{font-style:normal;color:var(--line2)}
+.datebar input:focus{outline:2px solid #D9CBB0;outline-offset:1px}
+button,.filebtn{
+  font:inherit;color:var(--ink);background:var(--paper);
+  border:1px solid var(--line);border-radius:8px;cursor:pointer;
+  padding:8px 12px;transition:border-color .15s,background .15s;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+button:hover,.filebtn:hover{border-color:var(--line2)}
+button:active,.filebtn:active{background:#F7F1E5}
+.icon{width:38px;padding:8px 0}
+
+.daywin{font-size:11px;color:var(--muted);margin:0 2px 12px;letter-spacing:.02em}
+
+.palette{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-bottom:8px}
+.pbtn{
+  display:flex;align-items:center;gap:6px;text-align:left;padding:7px 6px;min-width:0;
+  background:var(--paper);border:1px solid var(--line);border-radius:8px;
+}
+.pbtn .sw{
+  width:12px;height:12px;border-radius:3px;flex:none;background:var(--sw);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.14);
+}
+.pbtn .tx{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.pbtn .tx b{font-size:12px;font-weight:600;white-space:nowrap}
+.pbtn .tx i{font-size:10px;color:var(--muted);font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbtn.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.pbtn .sw.eraser{background:repeating-linear-gradient(45deg,#fff 0 3px,#E8E2D6 3px 6px)}
+
+.hint{font-size:11px;color:var(--muted);margin:0 2px 12px;letter-spacing:.02em}
+
+.main{display:grid;grid-template-columns:372px 286px minmax(0,1fr);gap:14px;align-items:start}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}
+.matrix{padding:12px 10px}
+
+table{border-collapse:separate;border-spacing:2px;width:100%;table-layout:fixed}
+col.c-lab{width:46px}
+th.rl{
+  text-align:center;vertical-align:middle;user-select:none;cursor:pointer;
+  font-family:"Songti SC","STSong",Georgia,serif;font-weight:400;
+}
+th.rl .zi{display:block;font-size:15px;font-weight:500;color:#8E8577;line-height:1.15}
+th.rl .rg{
+  display:block;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;
+  font-size:9px;color:#A79D8B;line-height:1.3;font-variant-numeric:tabular-nums;
+}
+th.rl:hover .zi{color:var(--ink)}
+tr.rest th.rl .zi{color:#BFB5A3}
+td.chunk{
+  height:26px;border-radius:3px;background:#F7F2E8;
+  box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;
+  transition:background .12s,box-shadow .12s;
+}
+td.chunk:hover{filter:brightness(1.05)}
+td.c0{background:#F7F2E8;box-shadow:inset 0 0 0 1px var(--line)}
+td.c1{background:var(--c1);box-shadow:none}
+td.c7{background:var(--c7);box-shadow:none}
+td.c2{background:var(--c2);box-shadow:none}
+td.c3{background:var(--c3);box-shadow:none}
+td.c4{background:var(--c4);box-shadow:none}
+td.c5{background:var(--c5);box-shadow:none}
+td.c6{background:var(--c6);box-shadow:none}
+
+.side{display:flex;flex-direction:column;gap:14px}
+.pietitle{font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:10px}
+.piewrap{display:flex;justify-content:center;margin-bottom:12px}
+.pie{
+  position:relative;width:168px;height:168px;border-radius:50%;
+  background:#F2ECDF;transition:background .2s;
+}
+.piehole{
+  position:absolute;inset:46px;border-radius:50%;background:var(--paper);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 0 1px rgba(0,0,0,.03);
+}
+.piehole b{font-size:26px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;font-family:"Songti SC","STSong",serif}
+.piehole span{font-size:10.5px;color:var(--muted);margin-top:4px;letter-spacing:.08em}
+
+.legend{display:flex;flex-direction:column;gap:5px}
+.lg{display:flex;align-items:center;gap:8px;font-size:12px}
+.lg .sw{width:9px;height:9px;border-radius:2px;flex:none}
+.lg .sw.blank{background:repeating-linear-gradient(45deg,#DED5C3 0 2px,#F2ECDF 2px 4px)}
+.lg .nm{color:var(--ink)}
+.lg .vv{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lg .vv b{color:var(--ink);font-weight:600}
+
+.logtitle{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-size:10.5px;color:var(--muted);letter-spacing:.04em;margin-bottom:8px;
+}
+#saveState{color:#6E9A5E;opacity:0;transition:opacity .25s;white-space:nowrap}
+#saveState.on{opacity:1}
+.logs{display:flex;flex-direction:column;gap:8px}
+.logbox{border-top:1px solid var(--line);padding-top:7px}
+.logbox:first-child{border-top:0;padding-top:0}
+.loghead{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;letter-spacing:.08em}
+.loghead .cnt{font-variant-numeric:tabular-nums;letter-spacing:0}
+.loghead .cnt.warn{color:var(--amber)}
+.loghead .cnt.full{color:var(--alarm);font-weight:600}
+textarea.log{
+  display:block;width:100%;border:0;background:transparent;padding:0;margin:0;
+  resize:none;overflow-y:auto;font:inherit;font-size:13px;color:#56468A;line-height:1.5;
+  min-height:40px;max-height:180px;outline:none;
+}
+textarea.log::placeholder{color:#C3BAA9}
+
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  background:rgba(42,38,32,.92);color:#fff;padding:8px 14px;border-radius:8px;
+  font-size:12.5px;opacity:0;pointer-events:none;transition:.2s;z-index:50;max-width:90vw;
+}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:980px){
+  .main{grid-template-columns:372px minmax(0,1fr)}
+  .logpan{grid-column:1 / -1}
+  .side{max-width:420px}
+}
+@media (max-width:700px){
+  .main{grid-template-columns:1fr;gap:12px}
+  .matrix{order:1}
+  .side{order:2}
+  .logpan{order:3;grid-column:auto}
+  .palette{grid-template-columns:repeat(4,1fr)}
+  .pbtn .tx i{display:none}
+  .pie{width:150px;height:150px}
+  .piehole{inset:41px}
+  .datebar .dmeta{flex:1 0 100%;margin-top:2px;justify-content:space-between}
+}
+@media (max-width:430px){
+  .head h1{font-size:20px}
+  td.chunk{height:24px}
+  col.c-lab{width:40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="head">
+    <h1>时间账本</h1>
+    <span class="ver">轻矩阵</span>
+    <span id="meta">十二时辰 · 七十二格</span>
+  </div>
+
+  <div class="datebar">
+    <button class="icon" id="prevDay" title="前一天">‹</button>
+    <input type="date" id="dateInput">
+    <button class="icon" id="nextDay" title="后一天">›</button>
+    <button id="todayBtn">今天</button>
+    <div class="dmeta">
+      <span class="lunar" id="lunar"></span>
+      <span class="dinfo" id="dinfo"></span>
+    </div>
+  </div>
+  <div class="daywin" id="daywin"></div>
+
+  <div class="palette" id="palette"></div>
+  <div class="hint">按住拖动连续填色 · 点行首时辰可填满整行 · 右键擦除一格 · 数字键 1–7 换色，0 擦除</div>
+
+  <div class="main">
+    <section class="panel matrix">
+      <table id="grid">
+        <colgroup>
+          <col class="c-lab"><col><col><col><col><col><col>
+        </colgroup>
+        <tbody id="tbody"></tbody>
+      </table>
+    </section>
+
+    <aside class="side">
+      <section class="panel">
+        <div class="pietitle">今日分布</div>
+        <div class="piewrap">
+          <div class="pie" id="pie">
+            <div class="piehole"><b id="pieNum">0.0</b><span>小时</span></div>
+          </div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </section>
+    </aside>
+
+    <section class="panel logpan">
+      <div class="logtitle">
+        <span>日志 · 三条，每条 800 字节</span>
+        <span id="saveState">已保存</span>
+      </div>
+      <div class="logs">
+        <div class="logbox">
+          <div class="loghead"><span>LOG 1</span><span class="cnt" id="cnt0">0 / 800 字节</span></div>
+          <textarea class="log" id="log0" data-i="0" placeholder="今天发生了什么"></textarea>
+        </div>
+        <div class="logbox">
+          <div class="loghead"><span>LOG 2</span><span class="cnt" id="cnt1">0 / 800 字节</span></div>
+          <textarea class="log" id="log1" data-i="1" placeholder=""></textarea>
+        </div>
+        <div class="logbox">
+          <div class="loghead"><span>LOG 3</span><span class="cnt" id="cnt2">0 / 800 字节</span></div>
+          <textarea class="log" id="log2" data-i="2" placeholder=""></textarea>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tools">
+    <button id="undoBtn">撤销</button>
+    <button id="resetBtn">重置当日</button>
+    <button id="exportBtn">导出 JSON</button>
+    <label class="filebtn" for="importFile">导入 JSON</label>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= 常量 ================= */
+  var KEY = 'lightmatrix.v1';
+  var N = 72;
+  var REST = 24;              // 23:00–07:00 默认休息
+  var DAY_START = 23 * 60;    // 记账日从 23:00 起
+  var LOG_COUNT = 3;
+  var LOG_BYTES = 800;
+
+  var SHICHEN = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+  var CATS = [
+    { code: 1, name: '生活', note: '睡眠饮食清洁' },
+    { code: 7, name: '杂务', note: '采购烹饪收纳' },
+    { code: 2, name: '创作', note: '创意心流手工' },
+    { code: 3, name: '学习', note: '学习备考精读' },
+    { code: 4, name: '工作', note: '工作社交管理' },
+    { code: 5, name: '娱乐', note: '运动娱乐放松' },
+    { code: 6, name: '临时', note: '突发不可抗力' }
+  ];
+
+  /* ================= 元素 ================= */
+  var $ = function (id) { return document.getElementById(id); };
+  var gridEl = $('grid'), tbody = $('tbody'), paletteEl = $('palette');
+  var dateInput = $('dateInput'), toastEl = $('toast'), metaEl = $('meta');
+  var daywinEl = $('daywin'), pieEl = $('pie'), pieNumEl = $('pieNum');
+  var legendEl = $('legend'), saveStateEl = $('saveState');
+  var lunarEl = $('lunar'), dinfoEl = $('dinfo');
+  var logEls = [], cntEls = [];
+  for (var li = 0; li < LOG_COUNT; li++) {
+    logEls.push($('log' + li));
+    cntEls.push($('cnt' + li));
+  }
+
+  /* ================= 日期工具 ================= */
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+  function dateStr(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function shiftDate(s, n) {
+    var p = s.split('-');
+    return dateStr(new Date(+p[0], +p[1] - 1, +p[2] + n));
+  }
+  function isDateStr(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s); }
+  function bookDate(d) {
+    var t = new Date(d.getTime());
+    if (t.getHours() >= 23) t.setDate(t.getDate() + 1);
+    return dateStr(t);
+  }
+  function md(s) { var p = s.split('-'); return (+p[1]) + '/' + (+p[2]); }
+
+  /* ================= 农历 / 节气 / 节假日 ================= */
+
+  // 法定节假日与调休：数据来自国务院办公厅 2026 年放假通知
+  var HOLIDAYS = {
+    '2026-01-01': ['元旦', 'hol'], '2026-01-02': ['元旦', 'hol'], '2026-01-03': ['元旦', 'hol'],
+    '2026-01-04': ['调休上班', 'work'],
+    '2026-02-14': ['调休上班', 'work'],
+    '2026-02-15': ['春节假期', 'hol'], '2026-02-16': ['春节假期', 'hol'], '2026-02-17': ['春节假期', 'hol'],
+    '2026-02-18': ['春节假期', 'hol'], '2026-02-19': ['春节假期', 'hol'], '2026-02-20': ['春节假期', 'hol'],
+    '2026-02-21': ['春节假期', 'hol'], '2026-02-22': ['春节假期', 'hol'], '2026-02-23': ['春节假期', 'hol'],
+    '2026-02-28': ['调休上班', 'work'],
+    '2026-04-04': ['清明假期', 'hol'], '2026-04-05': ['清明假期', 'hol'], '2026-04-06': ['清明假期', 'hol'],
+    '2026-05-01': ['劳动节假期', 'hol'], '2026-05-02': ['劳动节假期', 'hol'], '2026-05-03': ['劳动节假期', 'hol'],
+    '2026-05-04': ['劳动节假期', 'hol'], '2026-05-05': ['劳动节假期', 'hol'],
+    '2026-05-09': ['调休上班', 'work'],
+    '2026-06-19': ['端午假期', 'hol'], '2026-06-20': ['端午假期', 'hol'], '2026-06-21': ['端午假期', 'hol'],
+    '2026-09-20': ['调休上班', 'work'],
+    '2026-09-25': ['中秋假期', 'hol'], '2026-09-26': ['中秋假期', 'hol'], '2026-09-27': ['中秋假期', 'hol'],
+    '2026-10-01': ['国庆假期', 'hol'], '2026-10-02': ['国庆假期', 'hol'], '2026-10-03': ['国庆假期', 'hol'],
+    '2026-10-04': ['国庆假期', 'hol'], '2026-10-05': ['国庆假期', 'hol'], '2026-10-06': ['国庆假期', 'hol'],
+    '2026-10-07': ['国庆假期', 'hol'],
+    '2026-10-10': ['调休上班', 'work']
+  };
+
+  var TERM_DEFS = [
+    ['小寒', 285, 1, 6], ['大寒', 300, 1, 20], ['立春', 315, 2, 4], ['雨水', 330, 2, 19],
+    ['惊蛰', 345, 3, 6], ['春分', 0, 3, 20], ['清明', 15, 4, 5], ['谷雨', 30, 4, 20],
+    ['立夏', 45, 5, 6], ['小满', 60, 5, 21], ['芒种', 75, 6, 6], ['夏至', 90, 6, 21],
+    ['小暑', 105, 7, 7], ['大暑', 120, 7, 23], ['立秋', 135, 8, 8], ['处暑', 150, 8, 23],
+    ['白露', 165, 9, 8], ['秋分', 180, 9, 23], ['寒露', 195, 10, 8], ['霜降', 210, 10, 23],
+    ['立冬', 225, 11, 7], ['小雪', 240, 11, 22], ['大雪', 255, 12, 7], ['冬至', 270, 12, 22]
+  ];
+  var termCache = {};
+
+  function sunLong(jd) {
+    var T = (jd - 2451545.0) / 36525;
+    var L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+    var M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * Math.PI / 180;
+    var C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M)
+          + (0.019993 - 0.000101 * T) * Math.sin(2 * M)
+          + 0.000289 * Math.sin(3 * M);
+    var om = (125.04 - 1934.136 * T) * Math.PI / 180;
+    var lon = L0 + C - 0.00569 - 0.00478 * Math.sin(om);
+    return ((lon % 360) + 360) % 360;
+  }
+
+  function jdFromYMD(y, m, d) {
+    if (m <= 2) { y -= 1; m += 12; }
+    var A = Math.floor(y / 100), B = 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+  }
+
+  // 解出每个节气交节时刻，按北京时间取日期
+  function termsOfYear(y) {
+    if (termCache[y]) return termCache[y];
+    var map = {};
+    TERM_DEFS.forEach(function (t) {
+      var jd = jdFromYMD(y, t[2], t[3]);
+      for (var i = 0; i < 8; i++) {
+        var diff = ((t[1] - sunLong(jd) + 540) % 360) - 180;
+        jd += diff / 0.98564736;
+      }
+      var dt = new Date(Math.round((jd + 8 / 24 - 2440587.5) * 86400000));
+      map[dt.getUTCFullYear() + '-' + pad2(dt.getUTCMonth() + 1) + '-' + pad2(dt.getUTCDate())] = t[0];
+    });
+    termCache[y] = map;
+    return map;
+  }
+
+  function lunarDayName(n) {
+    var dz = '一二三四五六七八九';
+    if (n === 10) return '初十';
+    if (n === 20) return '二十';
+    if (n === 30) return '三十';
+    if (n < 10) return '初' + dz.charAt(n - 1);
+    if (n < 20) return '十' + dz.charAt(n % 10 - 1);
+    if (n < 30) return '廿' + dz.charAt(n % 10 - 1);
+    return '三十';
+  }
+
+  /* ===== 干支：年以立春为界，月以十二「节」为界，日按儒略日连续推算 ===== */
+  var GAN = '甲乙丙丁戊己庚辛壬癸';
+  var ZHI = '子丑寅卯辰巳午未申酉戌亥';
+  var JIE_BRANCH = {
+    '立春': 2, '惊蛰': 3, '清明': 4, '立夏': 5, '芒种': 6, '小暑': 7,
+    '立秋': 8, '白露': 9, '寒露': 10, '立冬': 11, '大雪': 0, '小寒': 1
+  };
+
+  function jdn(y, m, d) { return Math.floor(jdFromYMD(y, m, d) + 0.5); }
+
+  // 返回 [年干支, 月干支, 日干支]
+  function ganzhi(dateStr) {
+    var p = dateStr.split('-');
+    var y = +p[0], m = +p[1], d = +p[2];
+
+    // 年：立春前算上一年
+    var ty = termsOfYear(y), lichun = '';
+    for (var k in ty) if (ty[k] === '立春') lichun = k;
+    var gy = (lichun && dateStr < lichun) ? y - 1 : y;
+    var yi = ((gy - 4) % 60 + 60) % 60;
+    var yGan = yi % 10, yZhi = yi % 12;
+
+    // 月：取最近的「节」
+    var cand = [];
+    [y - 1, y].forEach(function (yy) {
+      var tm = termsOfYear(yy);
+      Object.keys(tm).forEach(function (ds) {
+        if (JIE_BRANCH[tm[ds]] !== undefined) cand.push([ds, JIE_BRANCH[tm[ds]]]);
+      });
+    });
+    cand.sort(function (a, b) { return a[0] < b[0] ? -1 : 1; });
+    var branch = 1;
+    for (var i = 0; i < cand.length; i++) {
+      if (cand[i][0] <= dateStr) branch = cand[i][1];
+    }
+    var yinGan = (yGan % 5) * 2 + 2;                 // 五虎遁：甲己丙作首
+    var mGan = (yinGan + ((branch - 2 + 12) % 12)) % 10;
+
+    // 日：儒略日 + 49 取六十甲子
+    var di = ((jdn(y, m, d) + 49) % 60 + 60) % 60;
+    var dGan = di % 10, dZhi = di % 12;
+
+    return [
+      GAN.charAt(yGan) + ZHI.charAt(yZhi),
+      GAN.charAt(mGan) + ZHI.charAt(branch),
+      GAN.charAt(dGan) + ZHI.charAt(dZhi)
+    ];
+  }
+
+  function renderDayInfo() {
+    var p = cur.split('-');
+    var y = +p[0], m = +p[1], d = +p[2];
+    var dt = new Date(y, m - 1, d, 12);
+
+    // 农历（浏览器内置中国历法）
+    var lun = '';
+    try {
+      var parts = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { month: 'long', day: 'numeric' }).formatToParts(dt);
+      var mon = '', dd = 0;
+      parts.forEach(function (x) {
+        if (x.type === 'month') mon = x.value;
+        if (x.type === 'day') dd = parseInt(x.value, 10);
+      });
+      if (mon && dd) lun = '农历' + mon + lunarDayName(dd);
+    } catch (e) { lun = ''; }
+
+    var gz = ganzhi(cur);
+    var wd = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][dt.getDay()];
+    lunarEl.innerHTML = '<b>' + wd + '</b>' +
+      (lun ? ' · ' + lun : '') +
+      ' <i>· ' + gz[0] + '年 ' + gz[1] + '月 ' + gz[2] + '日</i>';
+
+    // 节假日 + 节气
+    var bits = [];
+
+    var h = HOLIDAYS[cur];
+    if (h) bits.push('<span class="' + h[1] + '">' + h[0] + '</span>');
+
+    var tm = termsOfYear(y);
+    if (tm[cur]) bits.push('<span class="term">' + tm[cur] + '</span>');
+
+    dinfoEl.innerHTML = bits.join('<i>·</i>');
+  }
+  function hm(m) { return pad2(Math.floor(m / 60)) + ':' + pad2(m % 60); }
+  function chunkMin(i) { return (DAY_START + i * 20) % 1440; }
+  function rangeLabel(i) {
+    var s = chunkMin(i);
+    return hm(s) + '–' + hm((s + 20) % 1440);
+  }
+
+  /* ================= UTF-8 字节 ================= */
+  function byteLen(s) {
+    var n = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      if (c < 0x80) n += 1;
+      else if (c < 0x800) n += 2;
+      else if (c >= 0xD800 && c <= 0xDBFF) { n += 4; i++; }
+      else n += 3;
+    }
+    return n;
+  }
+  function fitBytes(s, max) {
+    var n = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i), w;
+      if (c < 0x80) w = 1;
+      else if (c < 0x800) w = 2;
+      else if (c >= 0xD800 && c <= 0xDBFF) w = 4;
+      else w = 3;
+      if (n + w > max) return s.slice(0, i);
+      n += w;
+      if (c >= 0xD800 && c <= 0xDBFF) i++;
+    }
+    return s;
+  }
+  function emptyLogs() {
+    var a = [];
+    for (var i = 0; i < LOG_COUNT; i++) a.push('');
+    return a;
+  }
+
+  /* ================= 存档 ================= */
+  var DAYS = {};
+
+  function sanitizeCells(arr) {
+    var out = [];
+    for (var i = 0; i < N; i++) {
+      var v = Number(arr[i]);
+      out.push((v >= 0 && v <= 7 && v % 1 === 0) ? v : 0);
+    }
+    return out;
+  }
+
+  function normalizeDay(d) {
+    if (!d || !Array.isArray(d.c) || d.c.length !== N) return null;
+    var logs = emptyLogs(), i;
+    if (Array.isArray(d.logs)) {
+      for (i = 0; i < LOG_COUNT; i++) {
+        logs[i] = typeof d.logs[i] === 'string' ? fitBytes(d.logs[i], LOG_BYTES) : '';
+      }
+    } else if (typeof d.note === 'string') {
+      logs[0] = fitBytes(d.note, LOG_BYTES);
+    }
+    return { c: sanitizeCells(d.c), logs: logs };
+  }
+
+  function loadAll() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return {};
+      var obj = JSON.parse(raw);
+      if (!obj || typeof obj !== 'object' || !obj.days || typeof obj.days !== 'object') return {};
+      var out = {};
+      Object.keys(obj.days).forEach(function (k) {
+        if (!isDateStr(k)) return;
+        var d = normalizeDay(obj.days[k]);
+        if (d) out[k] = d;
+      });
+      return out;
+    } catch (e) {
+      console.warn('读取存档失败', e);
+      return {};
+    }
+  }
+
+  function saveAll() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ version: 1, days: DAYS }));
+      updateMeta();
+    } catch (e) {
+      console.warn('写入存档失败', e);
+      toast('保存失败：浏览器存储已满或被禁用');
+    }
+  }
+
+  var saveTimer = null;
+  function scheduleSave(done) {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      saveTimer = null;
+      saveAll();
+      if (done) done();
+    }, 250);
+  }
+  function flushSave() {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; saveAll(); }
+  }
+  window.addEventListener('pagehide', flushSave);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) flushSave(); });
+
+  /* ================= 状态 ================= */
+  var cur = bookDate(new Date());
+  var brush = 1;
+  var painting = false;
+  var cellEls = [];
+  var undoStack = [];
+  var stroke = null;
+  var pendingTouch = null;
+
+  function ensureDay(s) {
+    var d = DAYS[s];
+    if (!d) {
+      var c = new Array(N);
+      for (var i = 0; i < N; i++) c[i] = (i < REST) ? 1 : 0;
+      d = { c: c, logs: emptyLogs() };
+      DAYS[s] = d;
+    }
+    return d;
+  }
+
+  /* ================= 构建 ================= */
+  function buildGrid() {
+    var frag = document.createDocumentFragment();
+    for (var r = 0; r < 12; r++) {
+      var h0 = (23 + r * 2) % 24;
+      var h1 = (h0 + 2) % 24;
+      var tr = document.createElement('tr');
+      if (r < 4) tr.className = 'rest';
+
+      var th = document.createElement('th');
+      th.className = 'rl';
+      th.dataset.row = r;
+      th.innerHTML = '<span class="zi">' + SHICHEN[r] + '</span>' +
+                     '<span class="rg">' + pad2(h0) + '–' + pad2(h1) + '</span>';
+      th.title = SHICHEN[r] + '时 ' + pad2(h0) + ':00–' + pad2(h1) + ':00　点一下填满整行';
+      tr.appendChild(th);
+
+      for (var k = 0; k < 6; k++) {
+        var i = r * 6 + k;
+        var td = document.createElement('td');
+        td.className = 'chunk c0';
+        td.dataset.i = i;
+        td.title = rangeLabel(i);
+        tr.appendChild(td);
+        cellEls[i] = td;
+      }
+      frag.appendChild(tr);
+    }
+    tbody.appendChild(frag);
+  }
+
+  function buildPalette() {
+    var html = CATS.map(function (c) {
+      return '<button class="pbtn" data-code="' + c.code + '" style="--sw:var(--c' + c.code + ')" title="' + c.note + '">' +
+             '<span class="sw"></span>' +
+             '<span class="tx"><b>' + c.name + '</b><i>' + c.note + '</i></span>' +
+             '</button>';
+    }).join('');
+    html += '<button class="pbtn" data-code="0" style="--sw:#fff" title="恢复空白">' +
+            '<span class="sw eraser"></span>' +
+            '<span class="tx"><b>擦除</b><i>恢复空白格</i></span></button>';
+    paletteEl.innerHTML = html;
+    setBrush(1);
+  }
+
+  function setBrush(code) {
+    brush = code;
+    var btns = paletteEl.querySelectorAll('.pbtn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('on', Number(btns[i].dataset.code) === code);
+    }
+  }
+
+  /* ================= 渲染 ================= */
+  function renderGrid() {
+    var d = ensureDay(cur), i;
+    if (daywinEl) daywinEl.textContent = md(shiftDate(cur, -1)) + ' 23:00 → ' + md(cur) + ' 23:00　（子时起算）';
+    renderDayInfo();
+    for (i = 0; i < N; i++) cellEls[i].className = 'chunk c' + d.c[i];
+    for (i = 0; i < LOG_COUNT; i++) {
+      logEls[i].value = d.logs[i];
+      updateCount(i);
+      autoGrow(logEls[i]);
+    }
+  }
+
+  function renderStats() {
+    var c = ensureDay(cur).c;
+    var cnt = [0, 0, 0, 0, 0, 0, 0, 0];
+    var i;
+    for (i = 0; i < N; i++) cnt[c[i]]++;
+    var blank = cnt[0];
+
+    // 环形图
+    var acc = 0, stops = [];
+    CATS.forEach(function (k) {
+      var n = cnt[k.code];
+      if (!n) return;
+      var a = acc / N * 360, b = (acc + n) / N * 360;
+      stops.push('var(--c' + k.code + ') ' + a.toFixed(2) + 'deg ' + b.toFixed(2) + 'deg');
+      acc += n;
+    });
+    if (blank) {
+      stops.push('var(--blank) ' + (acc / N * 360).toFixed(2) + 'deg 360deg');
+    }
+    pieEl.style.background = stops.length ? 'conic-gradient(' + stops.join(',') + ')' : '#F2ECDF';
+
+    pieNumEl.textContent = ((N - blank) / 3).toFixed(1);
+
+    // 图例
+    var lg = '';
+    CATS.forEach(function (k) {
+      var n = cnt[k.code];
+      if (!n) return;
+      lg += '<div class="lg"><span class="sw" style="background:var(--c' + k.code + ')"></span>' +
+            '<span class="nm">' + k.name + '</span>' +
+            '<span class="vv"><b>' + n + '</b> 格 · ' + (n * 20) + ' 分钟 · ' + (n / N * 100).toFixed(0) + '%</span></div>';
+    });
+    if (blank) {
+      lg += '<div class="lg"><span class="sw blank"></span><span class="nm">未记录</span>' +
+            '<span class="vv"><b>' + blank + '</b> 格 · ' + (blank * 20) + ' 分钟 · ' + (blank / N * 100).toFixed(0) + '%</span></div>';
+    }
+    legendEl.innerHTML = lg;
+  }
+
+  function updateCount(j) {
+    var b = byteLen(logEls[j].value);
+    var c = cntEls[j];
+    c.textContent = b + ' / ' + LOG_BYTES + ' 字节';
+    c.className = 'cnt' + (b >= LOG_BYTES ? ' full' : (b >= LOG_BYTES * 0.9 ? ' warn' : ''));
+  }
+
+  function autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+  }
+
+  function updateMeta() {
+    if (metaEl) metaEl.textContent = '十二时辰 · 七十二格 · 已记 ' + Object.keys(DAYS).length + ' 天';
+  }
+
+  var savedTimer = null;
+  function flashSaved() {
+    saveStateEl.classList.add('on');
+    if (savedTimer) clearTimeout(savedTimer);
+    savedTimer = setTimeout(function () {
+      saveStateEl.classList.remove('on');
+      savedTimer = null;
+    }, 1400);
+  }
+
+  function onLogInput(el) {
+    var j = Number(el.dataset.i);
+    var v = fitBytes(el.value, LOG_BYTES);
+    if (v !== el.value) el.value = v;
+    ensureDay(cur).logs[j] = v;
+    updateCount(j);
+    autoGrow(el);
+    scheduleSave(flashSaved);
+  }
+
+  /* ================= 编辑 ================= */
+  function beginStroke() {
+    if (stroke) return;
+    stroke = { date: cur, c: ensureDay(cur).c.slice(), dirty: false };
+  }
+  function endStroke() {
+    if (stroke && stroke.dirty) {
+      undoStack.push(stroke);
+      if (undoStack.length > 30) undoStack.shift();
+    }
+    stroke = null;
+  }
+  function setCell(i, code) {
+    var d = ensureDay(cur);
+    if (d.c[i] === code) return false;
+    d.c[i] = code;
+    cellEls[i].className = 'chunk c' + code;
+    if (stroke) stroke.dirty = true;
+    return true;
+  }
+  function fillRow(r) {
+    beginStroke();
+    for (var k = 0; k < 6; k++) setCell(r * 6 + k, brush);
+    endStroke();
+    renderStats();
+    scheduleSave();
+  }
+  function doUndo() {
+    var s = undoStack.pop();
+    if (!s) { toast('没有可撤销的操作'); return; }
+    if (s.date !== cur) { cur = s.date; dateInput.value = cur; }
+    var d = ensureDay(cur);
+    d.c = s.c.slice();
+    renderGrid();
+    renderStats();
+    saveAll();
+  }
+  function resetDay() {
+    if (!confirm('把这一天重置为初始状态？（23:00–07:00 恢复默认休息）')) return;
+    beginStroke();
+    for (var i = 0; i < N; i++) setCell(i, i < REST ? 1 : 0);
+    endStroke();
+    renderGrid();
+    renderStats();
+    saveAll();
+  }
+
+  /* ================= 交互 ================= */
+  gridEl.addEventListener('pointerdown', function (e) {
+    var target = e.target;
+    if (!target || !target.closest) return;
+
+    var th = target.closest('th.rl');
+    if (th) { fillRow(Number(th.dataset.row)); return; }
+
+    var td = target.closest('td.chunk');
+    if (!td) return;
+    var idx = Number(td.dataset.i);
+
+    if (e.pointerType === 'mouse') {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      beginStroke();
+      if (setCell(idx, brush)) { renderStats(); scheduleSave(); }
+      painting = true;
+      return;
+    }
+    pendingTouch = { i: idx, x: e.clientX, y: e.clientY };
+  });
+
+  gridEl.addEventListener('pointermove', function (e) {
+    if (!pendingTouch) return;
+    if (Math.abs(e.clientX - pendingTouch.x) > 8 || Math.abs(e.clientY - pendingTouch.y) > 8) {
+      pendingTouch = null;
+    }
+  });
+
+  gridEl.addEventListener('pointerup', function () {
+    if (!pendingTouch) return;
+    beginStroke();
+    var changed = setCell(pendingTouch.i, brush);
+    endStroke();
+    pendingTouch = null;
+    if (changed) { renderStats(); scheduleSave(); }
+  });
+
+  gridEl.addEventListener('pointercancel', function () { pendingTouch = null; });
+
+  window.addEventListener('pointermove', function (e) {
+    if (!painting) return;
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    if (!el || !el.closest) return;
+    var td = el.closest('td.chunk');
+    if (!td) return;
+    if (setCell(Number(td.dataset.i), brush)) { renderStats(); scheduleSave(); }
+  });
+
+  window.addEventListener('pointerup', function () {
+    if (painting) painting = false;
+    endStroke();
+  });
+
+  window.addEventListener('blur', function () {
+    painting = false;
+    pendingTouch = null;
+    endStroke();
+  });
+
+  gridEl.addEventListener('contextmenu', function (e) {
+    var target = e.target;
+    if (!target || !target.closest) return;
+    var td = target.closest('td.chunk');
+    if (!td) return;
+    e.preventDefault();
+    beginStroke();
+    setCell(Number(td.dataset.i), 0);
+    endStroke();
+    renderStats();
+    scheduleSave();
+  });
+
+  paletteEl.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.pbtn') : null;
+    if (b) setBrush(Number(b.dataset.code));
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'z' || e.key === 'Z')) {
+      e.preventDefault();
+      doUndo();
+      return;
+    }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    if (/^[1-7]$/.test(e.key)) {
+      setBrush(CATS[Number(e.key) - 1].code);
+      e.preventDefault();
+    } else if (e.key === '0') {
+      setBrush(0);
+      e.preventDefault();
+    }
+  });
+
+  dateInput.addEventListener('change', function () {
+    var v = dateInput.value;
+    if (!isDateStr(v)) { dateInput.value = cur; return; }
+    gotoDate(v);
+  });
+
+  $('prevDay').addEventListener('click', function () { gotoDate(shiftDate(cur, -1)); });
+  $('nextDay').addEventListener('click', function () { gotoDate(shiftDate(cur, 1)); });
+  $('todayBtn').addEventListener('click', function () { gotoDate(bookDate(new Date())); });
+  $('undoBtn').addEventListener('click', doUndo);
+  $('resetBtn').addEventListener('click', resetDay);
+
+  function gotoDate(s) {
+    if (!isDateStr(s)) return;
+    flushSave();
+    cur = s;
+    dateInput.value = s;
+    undoStack.length = 0;
+    renderGrid();
+    renderStats();
+  }
+
+  logEls.forEach(function (el) {
+    el.addEventListener('input', function (e) {
+      if (e.isComposing) return;
+      onLogInput(el);
+    });
+    el.addEventListener('compositionend', function () { onLogInput(el); });
+  });
+
+  /* ================= 导入导出 ================= */
+  function exportJSON() {
+    flushSave();
+    var data = JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), days: DAYS }, null, 2);
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '时间账本-轻矩阵版-' + cur + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    toast('已导出 ' + Object.keys(DAYS).length + ' 天记录');
+  }
+
+  $('exportBtn').addEventListener('click', exportJSON);
+
+  $('importFile').addEventListener('change', function (e) {
+    var file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var obj = JSON.parse(String(reader.result));
+        if (!obj || typeof obj !== 'object' || !obj.days || typeof obj.days !== 'object') {
+          throw new Error('不是本应用的存档格式');
+        }
+        var n = 0;
+        Object.keys(obj.days).forEach(function (k) {
+          if (!isDateStr(k)) return;
+          var d = normalizeDay(obj.days[k]);
+          if (!d) return;
+          DAYS[k] = d;
+          n++;
+        });
+        if (!n) throw new Error('没有可导入的日期');
+        saveAll();
+        renderGrid();
+        renderStats();
+        toast('已导入 ' + n + ' 天记录');
+      } catch (err) {
+        toast('导入失败：' + (err && err.message ? err.message : '文件无法解析'));
+      }
+    };
+    reader.onerror = function () { toast('读取文件失败'); };
+    reader.readAsText(file);
+  });
+
+  /* ================= 提示 ================= */
+  var toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('on');
+      toastTimer = null;
+    }, 2200);
+  }
+
+  /* ================= 启动 ================= */
+  DAYS = loadAll();
+  cur = bookDate(new Date());
+  updateMeta();
+  buildGrid();
+  buildPalette();
+  dateInput.value = cur;
+  renderGrid();
+  renderStats();
+})();
+</script>
+</body>
+</html>
