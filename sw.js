@@ -1,9 +1,9 @@
 /* 时间账本 Service Worker
    策略：页面（导航请求）网络优先，静态资源缓存优先。
    这样在线时总能拿到最新版，离线时回退到缓存。 */
-const CACHE = 'time-ledger-v2';
+const CACHE = 'time-ledger-v3';
 const ASSETS = [
-  './', './index.html', './manifest.webmanifest',
+  './', './index.html', './manifest.json',
   './assets/icon-192.png', './assets/icon-512.png', './assets/icon-180.png'
 ];
 
