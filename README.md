@@ -1,10 +1,10 @@
 # 时间账本 · Time Ledger
 
 一天 72 格，一格 20 分钟。像柳比歇夫那样，把时间花在哪里记清楚。
-单文件 HTML，无依赖，数据只存在你的浏览器里。
+核心是一个 HTML 文件，无依赖、无构建，数据只存在你的浏览器里。
 
 72 blocks of 20 minutes per day — a minimal ledger of where your time goes, after Lyubishchev.
-Single-file HTML, no dependencies. Your data never leaves your browser.
+One HTML file at its core — no dependencies, no build step. Your data never leaves your browser.
 
 ![截图 · Screenshot](assets/screenshot.png)
 
@@ -19,6 +19,27 @@ Single-file HTML, no dependencies. Your data never leaves your browser.
 3. Up to three journal entries per day; they save automatically.
 
 快捷键 · Shortcuts：`1`–`7` 换色 · `0` 擦除 · `⌘Z` 撤销
+
+## 安装到手机 · Install on your phone
+
+发布到 GitHub Pages 后，用手机打开网址：
+
+- **iPhone**：Safari → 分享 → 添加到主屏幕
+- **Android**：Chrome → 菜单 → 安装应用
+
+装好后是独立窗口，没有地址栏；首次打开需要联网，之后离线可用。
+
+> 删除主屏图标会连同本地记录一起清掉，删之前先「导出 JSON」。
+
+After the repo is on GitHub Pages, open the URL on your phone:
+
+- **iPhone**: Safari → Share → Add to Home Screen
+- **Android**: Chrome → menu → Install app
+
+It runs in its own window with no address bar. The first load needs a network;
+after that it works offline.
+
+> Removing the icon also deletes the stored data — export your JSON first.
 
 ## 七类 · Categories
 
