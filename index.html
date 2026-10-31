@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <!--
   时间账本 · 轻矩阵版
-  版本：v2026.10.27-2104（最新）
+  版本：v2026.10.30-2155（最新，含 PWA）
   配色：生活 #EBD9AC 娱乐 #B7D3AC 学习 #D95F4E 临时 #EE9126 创作 #7B6BAE
   存档键：lightmatrix.v1
   十二时辰 · 每日三条 800 字节日志 · 农历与干支 · 节气与法定节假日(2026)
+  PWA：manifest.webmanifest + sw.js，可装到手机主屏
 -->
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="version" content="2026.10.27-2104">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#F3EEE5">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png">
+<link rel="apple-touch-icon" href="./assets/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="时间账本">
+<meta name="version" content="2026.10.30-2155">
 <title>时间账本 · 轻矩阵</title>
 <style>
 :root{
@@ -1013,6 +1021,17 @@ textarea.log::placeholder{color:#C3BAA9}
   dateInput.value = cur;
   renderGrid();
   renderStats();
+})();
+</script>
+<script>
+/* PWA：只在 https 或 localhost 下注册；双击以 file:// 打开时静默跳过 */
+(function () {
+  if (!("serviceWorker" in navigator)) return;
+  var ok = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (!ok) return;
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js").catch(function () {});
+  });
 })();
 </script>
 </body>
