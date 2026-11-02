@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <!--
   时间账本 · 轻矩阵版
-  版本：v2026.10.31-1330（最新，含 PWA）
+  版本：v2026.11.02-1127（最新，含署名）
   配色：生活 #EBD9AC 娱乐 #B7D3AC 学习 #D95F4E 临时 #EE9126 创作 #7B6BAE
+  作者：始于北海（github.com/shiyubeihai）
   存档键：lightmatrix.v1
   十二时辰 · 每日三条 800 字节日志 · 农历与干支 · 节气与法定节假日(2026)
-  PWA：manifest.json + sw.js，可装到手机主屏
+  PWA：manifest.webmanifest + sw.js，可装到手机主屏
 -->
 <html lang="zh-CN">
 <head>
@@ -18,7 +19,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="时间账本">
-<meta name="version" content="2026.10.31-1330">
+<meta name="version" content="2026.11.02-1127">
 <title>时间账本 · 轻矩阵</title>
 <style>
 :root{
@@ -183,7 +184,10 @@ textarea.log{
 }
 textarea.log::placeholder{color:#C3BAA9}
 
-.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.credit{margin-left:auto;font-size:11px;color:var(--muted);letter-spacing:.02em;white-space:nowrap}
+.credit a{color:inherit;text-decoration:none;border-bottom:1px solid var(--line2);padding-bottom:1px}
+.credit a:hover{color:var(--ink);border-color:var(--ink)}
 
 #toast{
   position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
@@ -288,6 +292,7 @@ textarea.log::placeholder{color:#C3BAA9}
     <button id="exportBtn">导出 JSON</button>
     <label class="filebtn" for="importFile">导入 JSON</label>
     <input type="file" id="importFile" accept=".json,application/json" hidden>
+    <span class="credit">始于北海 · <a href="https://github.com/shiyubeihai" target="_blank" rel="noopener">github.com/shiyubeihai</a></span>
   </div>
 </div>
 <div id="toast"></div>

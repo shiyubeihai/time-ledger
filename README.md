@@ -25,7 +25,7 @@ One HTML file at its core — no dependencies, no build step. Your data never le
 发布到 GitHub Pages 后，用手机打开网址：
 
 - **iPhone**：Safari → 分享 → 添加到主屏幕
-- **Android**：Chrome → 菜单 → 安装应用
+- **Android**：Chrome → 菜单 → 安装应用。中国大陆的手机若没有 Google 服务，改从 **Edge** 安装（Chrome 的安装依赖 Play 服务打包，会静默失败）
 
 装好后是独立窗口，没有地址栏；首次打开需要联网，之后离线可用。
 
@@ -34,7 +34,8 @@ One HTML file at its core — no dependencies, no build step. Your data never le
 After the repo is on GitHub Pages, open the URL on your phone:
 
 - **iPhone**: Safari → Share → Add to Home Screen
-- **Android**: Chrome → menu → Install app
+- **Android**: Chrome → menu → Install app. Without Google Play services (common
+  on phones sold in mainland China) Chrome fails silently — use **Edge** instead.
 
 It runs in its own window with no address bar. The first load needs a network;
 after that it works offline.
@@ -100,3 +101,7 @@ Inspired by the Soviet biologist and mathematician Alexander Lyubishchev
 ## 许可 · License
 
 未指定 · Not specified.
+
+---
+
+作者 · Author：始于北海 · [github.com/shiyubeihai](https://github.com/shiyubeihai)
