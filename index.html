@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   时间账本 · 轻矩阵版
-  版本：v2026.11.02-1127（最新，含署名）
+  版本：v2026.11.14-1032（最新）
   配色：生活 #EBD9AC 娱乐 #B7D3AC 学习 #D95F4E 临时 #EE9126 创作 #7B6BAE
   作者：始于北海（github.com/shiyubeihai）
   存档键：lightmatrix.v1
@@ -19,7 +19,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="时间账本">
-<meta name="version" content="2026.11.02-1127">
+<meta name="version" content="2026.11.14-1032">
 <title>时间账本 · 轻矩阵</title>
 <style>
 :root{
@@ -36,6 +36,7 @@
   --c4:#4F8FB8;  /* 工作 */
   --c5:#B7D3AC;  /* 娱乐 */
   --c6:#EE9126;  /* 临时 */
+  --c8:#4A453E;  /* 自定义 */
   --blank:#E9E2D3;
   --alarm:#B54B45;  /* 界面警示色，与分类色无关 */
   --amber:#C08A2E;
@@ -89,6 +90,7 @@ button,.filebtn{
 button:hover,.filebtn:hover{border-color:var(--line2)}
 button:active,.filebtn:active{background:#F7F1E5}
 .icon{width:38px;padding:8px 0}
+#todayBtn.on{background:#2E5C78;border-color:#2E5C78;color:#fff}
 
 .daywin{font-size:11px;color:var(--muted);margin:0 2px 12px;letter-spacing:.02em}
 
@@ -140,6 +142,7 @@ td.c3{background:var(--c3);box-shadow:none}
 td.c4{background:var(--c4);box-shadow:none}
 td.c5{background:var(--c5);box-shadow:none}
 td.c6{background:var(--c6);box-shadow:none}
+td.c8{background:var(--c8);box-shadow:none}
 
 .side{display:flex;flex-direction:column;gap:14px}
 .pietitle{font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:10px}
@@ -179,7 +182,7 @@ td.c6{background:var(--c6);box-shadow:none}
 .loghead .cnt.full{color:var(--alarm);font-weight:600}
 textarea.log{
   display:block;width:100%;border:0;background:transparent;padding:0;margin:0;
-  resize:none;overflow-y:auto;font:inherit;font-size:13px;color:#56468A;line-height:1.5;
+  resize:none;overflow-y:auto;font:inherit;font-size:13px;color:#3A769E;line-height:1.5;
   min-height:40px;max-height:180px;outline:none;
 }
 textarea.log::placeholder{color:#C3BAA9}
@@ -240,7 +243,7 @@ textarea.log::placeholder{color:#C3BAA9}
   <div class="daywin" id="daywin"></div>
 
   <div class="palette" id="palette"></div>
-  <div class="hint">按住拖动连续填色 · 点行首时辰可填满整行 · 右键擦除一格 · 数字键 1–7 换色，0 擦除</div>
+  <div class="hint">按住拖动连续填色 · 点行首时辰可填满整行 · 右键或长按擦除 · 数字键 1–7 换色，8 自定义，0 擦除</div>
 
   <div class="main">
     <section class="panel matrix">
@@ -558,7 +561,7 @@ textarea.log::placeholder{color:#C3BAA9}
     var out = [];
     for (var i = 0; i < N; i++) {
       var v = Number(arr[i]);
-      out.push((v >= 0 && v <= 7 && v % 1 === 0) ? v : 0);
+      out.push((v >= 0 && v <= 8 && v % 1 === 0) ? v : 0);
     }
     return out;
   }
@@ -573,7 +576,8 @@ textarea.log::placeholder{color:#C3BAA9}
     } else if (typeof d.note === 'string') {
       logs[0] = fitBytes(d.note, LOG_BYTES);
     }
-    return { c: sanitizeCells(d.c), logs: logs };
+    var custom = (typeof d.custom === 'string') ? d.custom.slice(0, 12) : '';
+    return { c: sanitizeCells(d.c), logs: logs, custom: custom };
   }
 
   function loadAll() {
@@ -634,7 +638,7 @@ textarea.log::placeholder{color:#C3BAA9}
     if (!d) {
       var c = new Array(N);
       for (var i = 0; i < N; i++) c[i] = (i < REST) ? 1 : 0;
-      d = { c: c, logs: emptyLogs() };
+      d = { c: c, logs: emptyLogs(), custom: '' };
       DAYS[s] = d;
     }
     return d;
@@ -678,9 +682,9 @@ textarea.log::placeholder{color:#C3BAA9}
              '<span class="tx"><b>' + c.name + '</b><i>' + c.note + '</i></span>' +
              '</button>';
     }).join('');
-    html += '<button class="pbtn" data-code="0" style="--sw:#fff" title="恢复空白">' +
-            '<span class="sw eraser"></span>' +
-            '<span class="tx"><b>擦除</b><i>恢复空白格</i></span></button>';
+    html += '<button class="pbtn" data-code="8" id="customBtn" style="--sw:var(--c8)" title="自定义活动，每天可以不同；选中后再点一次可改名">' +
+            '<span class="sw"></span>' +
+            '<span class="tx"><b>自定义</b><i>点一下命名</i></span></button>';
     paletteEl.innerHTML = html;
     setBrush(1);
   }
@@ -697,7 +701,10 @@ textarea.log::placeholder{color:#C3BAA9}
   function renderGrid() {
     var d = ensureDay(cur), i;
     if (daywinEl) daywinEl.textContent = md(shiftDate(cur, -1)) + ' 23:00 → ' + md(cur) + ' 23:00　（子时起算）';
+    var tb = document.getElementById('todayBtn');
+    if (tb) tb.classList.toggle('on', cur === bookDate(new Date()));
     renderDayInfo();
+    updateCustomBtn();
     for (i = 0; i < N; i++) cellEls[i].className = 'chunk c' + d.c[i];
     for (i = 0; i < LOG_COUNT; i++) {
       logEls[i].value = d.logs[i];
@@ -707,15 +714,16 @@ textarea.log::placeholder{color:#C3BAA9}
   }
 
   function renderStats() {
-    var c = ensureDay(cur).c;
-    var cnt = [0, 0, 0, 0, 0, 0, 0, 0];
+    var d = ensureDay(cur), c = d.c;
+    var cnt = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var list = CATS.concat([{ code: 8, name: d.custom || '自定义' }]);
     var i;
     for (i = 0; i < N; i++) cnt[c[i]]++;
     var blank = cnt[0];
 
     // 环形图
     var acc = 0, stops = [];
-    CATS.forEach(function (k) {
+    list.forEach(function (k) {
       var n = cnt[k.code];
       if (!n) return;
       var a = acc / N * 360, b = (acc + n) / N * 360;
@@ -731,7 +739,7 @@ textarea.log::placeholder{color:#C3BAA9}
 
     // 图例
     var lg = '';
-    CATS.forEach(function (k) {
+    list.forEach(function (k) {
       var n = cnt[k.code];
       if (!n) return;
       lg += '<div class="lg"><span class="sw" style="background:var(--c' + k.code + ')"></span>' +
@@ -848,18 +856,27 @@ textarea.log::placeholder{color:#C3BAA9}
       painting = true;
       return;
     }
-    pendingTouch = { i: idx, x: e.clientX, y: e.clientY };
+    pendingTouch = { i: idx, x: e.clientX, y: e.clientY, timer: setTimeout(function () {
+      if (!pendingTouch) return;
+      beginStroke();
+      var ch = setCell(pendingTouch.i, 0);
+      endStroke();
+      pendingTouch = null;
+      if (ch) { renderStats(); scheduleSave(); toast('已擦除'); }
+    }, 500) };
   });
 
   gridEl.addEventListener('pointermove', function (e) {
     if (!pendingTouch) return;
     if (Math.abs(e.clientX - pendingTouch.x) > 8 || Math.abs(e.clientY - pendingTouch.y) > 8) {
+      if (pendingTouch.timer) clearTimeout(pendingTouch.timer);
       pendingTouch = null;
     }
   });
 
   gridEl.addEventListener('pointerup', function () {
     if (!pendingTouch) return;
+    if (pendingTouch.timer) clearTimeout(pendingTouch.timer);
     beginStroke();
     var changed = setCell(pendingTouch.i, brush);
     endStroke();
@@ -867,7 +884,10 @@ textarea.log::placeholder{color:#C3BAA9}
     if (changed) { renderStats(); scheduleSave(); }
   });
 
-  gridEl.addEventListener('pointercancel', function () { pendingTouch = null; });
+  gridEl.addEventListener('pointercancel', function () {
+    if (pendingTouch && pendingTouch.timer) clearTimeout(pendingTouch.timer);
+    pendingTouch = null;
+  });
 
   window.addEventListener('pointermove', function (e) {
     if (!painting) return;
@@ -902,9 +922,37 @@ textarea.log::placeholder{color:#C3BAA9}
     scheduleSave();
   });
 
+  function updateCustomBtn() {
+    var b = document.getElementById('customBtn');
+    if (!b) return;
+    var nm = (DAYS[cur] && DAYS[cur].custom) || '';
+    b.querySelector('b').textContent = nm || '自定义';
+    b.querySelector('i').textContent = nm ? '点一下改名' : '点一下命名';
+    b.title = nm ? '当前自定义：' + nm + '（再点一次可改名）' : '自定义活动，每天可以不同';
+  }
+
+  function askCustom() {
+    var d = ensureDay(cur);
+    var v = prompt('这一格代表什么？每天可以不同', d.custom || '');
+    if (v === null) return false;
+    d.custom = v.trim().slice(0, 12);
+    updateCustomBtn();
+    renderStats();
+    scheduleSave();
+    return true;
+  }
+
   paletteEl.addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('.pbtn') : null;
-    if (b) setBrush(Number(b.dataset.code));
+    if (!b) return;
+    var code = Number(b.dataset.code);
+    if (code === 8) {
+      if (brush === 8) { askCustom(); return; }     // 已选中再点 = 改名
+      setBrush(8);
+      if (!(DAYS[cur] && DAYS[cur].custom)) askCustom();
+      return;
+    }
+    setBrush(code);
   });
 
   document.addEventListener('keydown', function (e) {
@@ -918,6 +966,10 @@ textarea.log::placeholder{color:#C3BAA9}
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
     if (/^[1-7]$/.test(e.key)) {
       setBrush(CATS[Number(e.key) - 1].code);
+      e.preventDefault();
+    } else if (e.key === '8') {
+      setBrush(8);
+      if (!(DAYS[cur] && DAYS[cur].custom)) askCustom();
       e.preventDefault();
     } else if (e.key === '0') {
       setBrush(0);

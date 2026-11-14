@@ -13,12 +13,15 @@ One HTML file at its core — no dependencies, no build step. Your data never le
 1. 打开 `index.html`，按住拖动给时间段涂色
 2. 点行首的时辰字，一次填满整行（2 小时）
 3. 每天最多三条日志，输入后自动保存
+4. 七类不够用时，点最后一个「自定义」，给当天起一个自己的活动名
 
 1. Open `index.html` and drag across the grid to paint time blocks.
 2. Click a 时辰 label on the left to fill a whole 2-hour row.
 3. Up to three journal entries per day; they save automatically.
+4. When the seven categories don't fit, click 自定义 to name one activity for that day.
 
-快捷键 · Shortcuts：`1`–`7` 换色 · `0` 擦除 · `⌘Z` 撤销
+快捷键 · Shortcuts：`1`–`7` 换色 · `8` 自定义 · `0` 擦除 · `⌘Z` 撤销
+右键或长按某格擦除
 
 ## 安装到手机 · Install on your phone
 
@@ -53,6 +56,14 @@ after that it works offline.
 | 工作 | 工作、社交、管理 | Work |
 | 娱乐 | 运动、娱乐、放松 | Play |
 | 临时 | 突发、不可抗力 | Ad hoc |
+| 自定义 | 当天临时起名，每天可不同 | Custom |
+
+「自定义」一天只能起一个名字，当天的深墨色块都记在这个名下，
+统计时单独成一项。选中后再点一次按钮即可改名。
+
+Custom gives you one named activity per day; all dark blocks of that day share
+the name, and it appears as its own slice in the chart. Click the button again
+to rename it.
 
 记账日从 23:00 起算（子时），深夜那两个小时计在前一天。
 The day starts at 23:00 (子时, the first 时辰), so late-night hours count toward the previous day.
